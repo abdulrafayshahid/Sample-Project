@@ -5,7 +5,9 @@ if ($_POST['function'] == "save_content") {
  
 }elseif($_POST['function'] == "ShowContent"){
     ShowContent();
-}
+}elseif($_POST['function'] == "deletedata"){
+    deletedata();
+ }
 
 function SaveContent(){
     include("database.php");
@@ -33,9 +35,22 @@ if ($result->num_rows > 0) {
     }
 }
 
+
+
 // Return the data as JSON
 
 echo json_encode($data);
 }
-
+function deletedata(){
+    include("database.php");
+    $sql = "DELETE FROM `user`";
+    
+    $result = mysqli_query($con , $sql);
+    
+    if ($result) {
+        echo 'Success   ';
+     } //else{
+    //     echo'error';
+    // }
+}
 ?>
