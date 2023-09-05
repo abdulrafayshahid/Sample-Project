@@ -1,14 +1,13 @@
 <?php
 
 if ($_POST['function'] == "save_content") {
- SaveContent();
- 
+    SaveContent();
 }elseif($_POST['function'] == "ShowContent"){
     ShowContent();
-}elseif($_POST['function'] == "deletedata"){
-    deletedata();
 }elseif($_POST['function'] == "delete_data"){
     delete_data();
+}elseif($_POST['function'] == "deletedata"){
+    deletedata();
 }
 
 function SaveContent(){
@@ -42,6 +41,7 @@ if ($result->num_rows > 0) {
 // Return the data as JSON
 
 echo json_encode($data);
+
 }
 function deletedata(){
     include("database.php");
@@ -54,10 +54,13 @@ function deletedata(){
      } //else{
     //     echo'error';
     // }
+
+    
 }
 function delete_data(){
     include("database.php");
     $id = $_POST['id'];
+    
     $sql = "DELETE FROM `user` where id=$id";
     
     $result = mysqli_query($con , $sql);
@@ -67,5 +70,9 @@ function delete_data(){
      } //else{
     //     echo'error';
     // }
+    
 }
+
+
+
 ?>

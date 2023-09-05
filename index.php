@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,10 +29,11 @@
                     </div>
 
                 </div>
-                <button class="btn btn-outline-secondary" style="width:100; margin-left: 13; margin-top: 50">Add
-                    Data</button>
+
 
             </div>
+            <button class="btn btn-outline-secondary" style="width:fit-content; margin: right 20%;; margin-top:20px">Add Data</button>
+
         </div>
     </form>
 
@@ -48,9 +52,10 @@
                     <!-- Data will be inserted here -->
                 </tbody>
             </table>
+            <button id="div2" class="btn btn-outline-secondary" style="width:100; margin-left: 5; margin-top: 20" onclick="clear_field()">Delete</button>
+
     </div>
 
-    <button id="div2" class="btn btn-outline-secondary" style="width:100; margin-left: 125; margin-top: 30">Delete</button>
 
     <!-- Add Bootstrap JS and jQuery scripts -->
 
@@ -60,7 +65,10 @@
 
     <script>
         $('#addForm').submit(function(event) {
+
+
             event.preventDefault(); // Prevent the default form submission
+
 
             // Send the form data to the server using AJAX
             $.ajax({
@@ -71,13 +79,22 @@
                     age: $("input[name=age]").val(),
                     function: "save_content"
 
+
                 },
+
                 success: function(data) {
-                    console.log(data);
+
+
                     ShowContent();
                 }
 
+
             });
+            var input1 = document.getElementById('name');
+            input1.value = "";
+            var input2 = document.getElementById('age');
+            input2.value = "";
+
         });
 
 
@@ -89,28 +106,38 @@
                     function: "ShowContent"
                 },
                 success: function(data) {
-                    
-                    a = JSON.parse(data)
-                    console.log(a)
+
+                    a = JSON.parse(data);
+
+
                     var tableBody = document.getElementById("table-body");
                     tableBody.innerHTML = "";
-                    console.log(tableBody);
+
                     for (let i = 0; i < a.length; i++) {
                         var name = a[i]['Name'];
                         var age = a[i]['Age'];
+                        var id = a[i]['id'];
                         var tr = document.createElement("tr");
                         var td1 = document.createElement("td");
                         var td2 = document.createElement("td");
                         var btn = document.createElement("button");
+                        var edit_btn = document.createElement("button");
                         btn.innerHTML = ("Delete");
                         btn.className = ("btn btn-outline-secondary");
-                        btn.id = ("btn1");
-
+                        btn.style = "width:100; height:40; margin-left:10";
+                        btn.id = (id);
+                        btn.addEventListener("click", function() {
+                            delete_data(id)
+                        });
+                        edit_btn.innerHTML = ("Edit");
+                        edit_btn.className = ("btn btn-outline-secondary");
+                        edit_btn.style = "width:100; height:40; margin-left:20";
                         td1.innerHTML = name;
                         td2.innerHTML = (age);
                         tr.appendChild(td1);
                         tr.appendChild(td2);
                         tr.appendChild(btn);
+                        tr.appendChild(edit_btn);
                         tableBody.appendChild(tr);
                         // tableBody.innerHTML+=`
                         // <div class="container mt-5">
@@ -151,24 +178,16 @@
             $("#div2").click(function(event) {
                 // Call the delete function here or replace this with your actual delete logic
                 deletedata();
-f
+
             });
 
         });
 
-        //Add Click Event Listener
-        $(document).ready(function() {
-            // Attach a click event listener to the button with id "div2"
-            $("#btn1").click(function(event) {
-                // Call the delete function here or replace this with your actual delete logic
-                delete_data();
-            });
 
-        });
 
 
         function deletedata() {
-            console.log('error');
+
             $.ajax({
                 url: 'function.php', // URL of your PHP script
                 type: 'POST',
@@ -177,7 +196,8 @@ f
                 },
 
                 success: function(data) {
-                    console.log(data);
+
+
 
                     ShowContent();
 
@@ -186,13 +206,16 @@ f
         }
 
         function delete_data(id) {
-            
+            console.log('delete_data');
+            console.log(id);
+
             $.ajax({
                 url: 'function.php', // URL of your PHP script
                 type: 'POST',
                 data: {
                     function: "delete_data",
-                    id:id
+                    id: id
+
                 },
 
                 success: function(data) {
@@ -200,7 +223,7 @@ f
 
                     ShowContent();
 
-                },
+                }
             });
         }
 
