@@ -2,12 +2,15 @@
 
 if ($_POST['function'] == "save_content") {
     SaveContent();
-}elseif($_POST['function'] == "ShowContent"){
+} elseif($_POST['function'] == "ShowContent"){
     ShowContent();
-}elseif($_POST['function'] == "delete_data"){
+} elseif($_POST['function'] == "delete_data"){
     delete_data();
-}elseif($_POST['function'] == "deletedata"){
+} elseif($_POST['function'] == "deletedata"){
     deletedata();
+
+} elseif($_POST['function'] == "update_data"){
+    update_data();
 }
 
 function SaveContent(){
@@ -62,6 +65,25 @@ function delete_data(){
     $id = $_POST['id'];
     
     $sql = "DELETE FROM `user` where id=$id";
+    
+    $result = mysqli_query($con , $sql);
+    
+    if ($result) {
+        echo 'Success   ';
+     } //else{
+    //     echo'error';
+    // }
+    
+}
+
+function update_data(){
+    include("database.php");
+    $name = $_POST['name'];
+    $age = $_POST['age'];
+    $id = $_POST['id'];
+
+    
+    $sql = "UPDATE `user` SET `Name`='$name',`Age`='$age' where id=$id";
     
     $result = mysqli_query($con , $sql);
     

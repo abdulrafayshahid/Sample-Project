@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +7,6 @@
     <!-- Add Bootstrap CSS link -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 </head>
-
 <body>
     <style>
         .green-background {
@@ -60,24 +58,23 @@
     <script>
         $('#addForm').submit(function(event) {
             event.preventDefault(); // Prevent the default form submission
-
             // Send the form data to the server using AJAX
             $.ajax({
                 url: 'function.php', // URL of your PHP script to submit data
                 type: 'POST',
                 data: {
-                    name: $("#name").val(),
-                    age: $("#age").val(),
+                    name: $("input[name=name]").val(),
+                    age: $("input[name=age]").val(),
                     function: "save_content"
                 },
                 success: function(data) {
                     ShowContent();
                 }
             });
-
-            // Clear input fields
-            $("#name").val("");
-            $("#age").val("");
+            var input1 = document.getElementById('name');
+            input1.value = "";
+            var input2 = document.getElementById('age');
+            input2.value = "";
         });
 
         function ShowContent() {
@@ -89,42 +86,41 @@
                 },
                 success: function(data) {
                     var a = JSON.parse(data);
-                    var tableBody = $("#table-body");
-                    tableBody.empty();
+                    var tableBody = document.getElementById("table-body");
+                    tableBody.innerHTML = "";
 
                     for (let i = 0; i < a.length; i++) {
                         var name = a[i]['Name'];
                         var age = a[i]['Age'];
                         var id = a[i]['id'];
-                        var tr = $("<tr>");
-                        var td1 = $("<td>").text(name);
-                        var td2 = $("<td>").text(age);
+                        var tr = document.createElement("tr");
+                        var td1 = document.createElement("td");
+                        var td2 = document.createElement("td");
                         var btn = document.createElement("button");
-                        btn.innerHTML = ("Delete");
-                        btn.className = ("btn btn-outline-secondary");
-                        btn.style = "width:100; height:40; margin-left:10px";
-                        btn.id = (id);
+                        var edit_btn = document.createElement("button");
+
+                        btn.innerHTML = "Delete";
+                        btn.className = "btn btn-outline-secondary";
+                        btn.style.width = "100px";
+                        btn.id = id;
                         btn.addEventListener("click", function() {
-
-                            delete_data(id)
+                            delete_data(id);
                         });
-                        var edit_btn = $("<button>").text("Edit").addClass("btn btn-outline-secondary").css("width", "100px").attr("id", id);
 
-
-                        edit_btn.on("click", function() {
-                            // Your edit logic here
+                        edit_btn.innerHTML = "Edit";
+                        edit_btn.className = "btn btn-outline-secondary";
+                        edit_btn.style.width = "100px";
+                        edit_btn.id = id;
+                        edit_btn.addEventListener("click", function() {
                             if (this.textContent === 'Edit') {
-
                                 // Change the button text to "Save"
                                 this.textContent = 'Save';
                                 // Disable other edit buttons while editing
                                 $('.edit_btn').prop('disabled', true);
-
                                 // Get the current row's data
                                 var currentRow = $(this).closest('tr');
                                 var name = currentRow.find('td:eq(0)').text();
                                 var age = currentRow.find('td:eq(1)').text();
-
                                 // Populate the form fields with the row data
                                 $('#name').val(name);
                                 $('#age').val(age);
@@ -133,28 +129,28 @@
                                 var updatedName = $('#name').val();
                                 var updatedAge = $('#age').val();
                                 update_content(this.id, updatedName, updatedAge);
-
                                 // Restore the button text to "Edit"
                                 this.textContent = 'Edit';
                                 // Enable other edit buttons
                                 $('.edit_btn').prop('disabled', false);
                             }
-
-
                         });
 
-                        tr.append(td1);
-                        tr.append(td2);
-                        tr.append(btn);
-                        tr.append(edit_btn);
-                        tableBody.append(tr);
+                        td1.innerHTML = name;
+                        td2.innerHTML = age;
 
                         // Apply background color based on age
                         if (parseInt(age) >= 18) {
-                            tr.addClass('green-background');
+                            tr.classList.add('green-background');
                         } else {
-                            tr.addClass('red-background');
+                            tr.classList.add('red-background');
                         }
+
+                        tr.appendChild(td1);
+                        tr.appendChild(td2);
+                        tr.appendChild(btn);
+                        tr.appendChild(edit_btn);
+                        tableBody.appendChild(tr);
                     }
                 },
                 error: function(error) {
@@ -184,63 +180,3 @@
                 }
             });
         }
-
-        function delete_data(id) {
-
-
-            $.ajax({
-                url: 'function.php', // URL of your PHP script
-                type: 'POST',
-                data: {
-                    function: "delete_data",
-                    id: id
-
-                },
-
-                success: function(data) {
-
-
-                    ShowContent();
-
-                }
-            });
-        }
-
-        function update_content(id, updatedName, updatedAge) {
-
-            $.ajax({
-                url: 'function.php', // URL of your PHP script
-                type: 'POST',
-                data: {
-                    name: $("input[name=name]").val(),
-                    age: $("input[name=age]").val(),
-                    function: "update_data",
-                    id: id
-                },
-
-                success: function(data) {
-
-
-                    ShowContent();
-
-                }
-            });
-            var input1 = document.getElementById('name');
-            input1.value = "";
-            var input2 = document.getElementById('age');
-            input2.value = "";
-
-        }
-
-
-
-
-        $(document).ready(function() {
-            // Fetch data from the server using jQuery AJAX
-            ShowContent();
-        });
-    </script>
-
-</body>
-
-</html>
