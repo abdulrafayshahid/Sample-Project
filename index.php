@@ -58,8 +58,18 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script>
+        // if (parseInt(age) >= 18) {
+        //     var verification = ['verified'];
+        //     verification.id = ['verified'];
+        // } else {
+        //     var verification = ['unverified'];
+        //     verification.id = ['verified']
+        // }
+
         $('#addForm').submit(function(event) {
             event.preventDefault(); // Prevent the default form submission
+            var age = parseInt($("#age").val());
+            var verification = age >= 18 ? 'verified' : 'unverified';
 
             // Send the form data to the server using AJAX
             $.ajax({
@@ -67,7 +77,9 @@
                 type: 'POST',
                 data: {
                     name: $("#name").val(),
-                    age: $("#age").val(),
+                    age: age,
+                    verification: verification,
+                    // verification: $('#verified').val(),
                     function: "save_content"
                 },
                 success: function(data) {
@@ -105,7 +117,6 @@
                         btn.style = "width:100; height:40; margin-left:10px";
                         btn.id = (id);
                         btn.addEventListener("click", function() {
-
                             delete_data(id)
                         });
                         var edit_btn = $("<button>").text("Edit").addClass("btn btn-outline-secondary").css("width", "100px").attr("id", id);
@@ -128,11 +139,14 @@
                                 // Populate the form fields with the row data
                                 $('#name').val(name);
                                 $('#age').val(age);
+                                $('#verification').val(verification);
                             } else {
                                 // Handle "Save" logic here
                                 var updatedName = $('#name').val();
                                 var updatedAge = $('#age').val();
-                                update_content(this.id, updatedName, updatedAge);
+                                var updatedverification = $('#verification').val();
+                                var updatedverification = updatedAge >= 18 ? 'verified' : 'unverified';
+                                update_content(this.id, updatedName, updatedAge,updatedverification);
 
                                 // Restore the button text to "Edit"
                                 this.textContent = 'Edit';
@@ -177,7 +191,7 @@
                 url: 'function.php', // URL of your PHP script
                 type: 'POST',
                 data: {
-                    function: "deleteData"
+                    function: "deletedata"
                 },
                 success: function(data) {
                     ShowContent();
@@ -206,7 +220,7 @@
             });
         }
 
-        function update_content(id, updatedName, updatedAge) {
+        function update_content(id, updatedName, updatedAge,updatedverification) {
 
             $.ajax({
                 url: 'function.php', // URL of your PHP script
@@ -214,6 +228,7 @@
                 data: {
                     name: $("input[name=name]").val(),
                     age: $("input[name=age]").val(),
+                    verification: updatedverification,
                     function: "update_data",
                     id: id
                 },

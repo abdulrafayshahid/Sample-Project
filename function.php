@@ -17,8 +17,9 @@ function SaveContent(){
     include("database.php");
     $name = $_POST['name'];
     $age = $_POST['age'];
+    $verification = $_POST['verification'];
     
-    $sql = "INSERT INTO `user`(`Name`, `Age`) VALUES ('$name','$age')";
+    $sql = "INSERT INTO `user`(`Name`, `Age`, `verification`) VALUES ('$name','$age','$verification')";
     
     $result = mysqli_query($con , $sql);
     
@@ -81,9 +82,9 @@ function update_data(){
     $name = $_POST['name'];
     $age = $_POST['age'];
     $id = $_POST['id'];
-
+    $verification = $_POST['verification'];
     
-    $sql = "UPDATE `user` SET `Name`='$name',`Age`='$age' where id=$id";
+    $sql = "UPDATE `user` SET `Name`='$name',`Age`='$age',`verification`='$verification' where id=$id";
     
     $result = mysqli_query($con , $sql);
     
