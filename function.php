@@ -8,19 +8,19 @@ if ($_POST['function'] == "save_content") {
     delete_data();
 } elseif($_POST['function'] == "deletedata"){
     deletedata();
-
 } elseif($_POST['function'] == "update_data"){
     update_data();
 }
+    // } elseif ($_POST['function'] == "qualification_data") {
+//     qualification_data();
+// }
 
 function SaveContent(){
     include("database.php");
     $name = $_POST['name'];
     $age = $_POST['age'];
     $verification = $_POST['verification'];
-    
     $sql = "INSERT INTO `user`(`Name`, `Age`, `verification`) VALUES ('$name','$age','$verification')";
-    
     $result = mysqli_query($con , $sql);
     
     if ($result) {
@@ -31,17 +31,15 @@ function SaveContent(){
 function ShowContent(){
     include("database.php");
     $sql = "SELECT `Name`, `Age`, `id` FROM `user`"; // Adjust the table and column names as needed
-$result = $con->query($sql);
-$data = array();
-
+    $result = $con->query($sql);
+    $data = array();
+    
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $data[] = $row;
     }
 }
-
-
-
+    
 // Return the data as JSON
 
 echo json_encode($data);
@@ -96,6 +94,20 @@ function update_data(){
     
 }
 
+// function qualification_data(){
+//     include("database.php"); // Include your database connection
 
+//     $sql = "SELECT `id`, `name` FROM `qualifications`"; // Adjust the table and column names as needed
+//     $result = $con->query($sql);
+//     $data = array();
 
+//     if ($result->num_rows > 0) {
+//         while ($row = $result->fetch_assoc()) {
+//             $data[] = $row;
+//         }
+//     }
+
+//     // Return the data as JSON
+//     echo json_encode($data);
+// }
 ?>

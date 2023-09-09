@@ -79,6 +79,7 @@
                     name: $("#name").val(),
                     age: age,
                     verification: verification,
+
                     // verification: $('#verified').val(),
                     function: "save_content"
                 },
@@ -91,6 +92,21 @@
             $("#name").val("");
             $("#age").val("");
         });
+
+        function updateRowBackgroundColor() {
+            var rows = $("#table-body tr");
+            rows.each(function() {
+                var age = parseInt($(this).find("td:eq(1)").text());
+                if (age >= 18) {
+                    $(this).addClass('green-background');
+                    $(this).removeClass('red-background');
+                } else {
+                    $(this).addClass('red-background');
+                    $(this).removeClass('green-background');
+                }
+            });
+        }
+
 
         function ShowContent() {
             $.ajax({
@@ -146,7 +162,7 @@
                                 var updatedAge = $('#age').val();
                                 var updatedverification = $('#verification').val();
                                 var updatedverification = updatedAge >= 18 ? 'verified' : 'unverified';
-                                update_content(this.id, updatedName, updatedAge,updatedverification);
+                                update_content(this.id, updatedName, updatedAge, updatedverification);
 
                                 // Restore the button text to "Edit"
                                 this.textContent = 'Edit';
@@ -163,12 +179,14 @@
                         tr.append(edit_btn);
                         tableBody.append(tr);
 
-                        // Apply background color based on age
-                        if (parseInt(age) >= 18) {
-                            tr.addClass('green-background');
-                        } else {
-                            tr.addClass('red-background');
-                        }
+                        updateRowBackgroundColor();
+
+                        // // Apply background color based on age
+                        // if (parseInt(age) >= 18) {
+                        //     tr.addClass('green-background');
+                        // } else {
+                        //     tr.addClass('red-background');
+                        // }
                     }
                 },
                 error: function(error) {
@@ -220,7 +238,7 @@
             });
         }
 
-        function update_content(id, updatedName, updatedAge,updatedverification) {
+        function update_content(id, updatedName, updatedAge, updatedverification) {
 
             $.ajax({
                 url: 'function.php', // URL of your PHP script
@@ -247,7 +265,36 @@
 
         }
 
+    
+        // function qualification_data() {
+        //     $.ajax({
+        //         url: 'function.php', // URL of your PHP script
+        //         type: 'POST',
+        //         data: {
+        //             function: "qualification_data" // Send a specific function name to identify the request
+        //         },
+        //         success: function(data) {
+        //             var qualificationData = JSON.parse(data);
 
+        //             // Now, you have the 'id' and 'name' data in the 'qualificationData' variable.
+        //             // You can use this data as needed in this function.
+        //             console.log(qualificationData);
+
+        //             // Example: Loop through the data and do something with it
+        //             for (let i = 0; i < qualificationData.length; i++) {
+        //                 var id = qualificationData[i]['id'];
+        //                 var name = qualificationData[i]['name'];
+        //                 console.log(name)
+
+        //                 // Perform actions with 'id' and 'name'
+        //                 // For example, you can create elements, append them to the DOM, etc.
+        //             }
+        //         },
+        //         error: function(error) {
+        //             console.error('Error:', error);
+        //         },
+        //     });
+        // }
 
 
         $(document).ready(function() {
