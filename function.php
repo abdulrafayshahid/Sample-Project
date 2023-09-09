@@ -2,97 +2,129 @@
 
 if ($_POST['function'] == "save_content") {
     SaveContent();
-} elseif($_POST['function'] == "ShowContent"){
+} elseif ($_POST['function'] == "ShowContent") {
     ShowContent();
-} elseif($_POST['function'] == "delete_data"){
+} elseif ($_POST['function'] == "delete_data") {
     delete_data();
-} elseif($_POST['function'] == "deletedata"){
+} elseif ($_POST['function'] == "deletedata") {
     deletedata();
-} elseif($_POST['function'] == "update_data"){
+} elseif ($_POST['function'] == "update_data") {
     update_data();
+} elseif ($_POST['function'] == "filterRecords") {
+    filterRecords();
 }
-    // } elseif ($_POST['function'] == "qualification_data") {
+// } elseif ($_POST['function'] == "qualification_data") {
 //     qualification_data();
 // }
 
-function SaveContent(){
+function SaveContent()
+{
     include("database.php");
     $name = $_POST['name'];
     $age = $_POST['age'];
     $verification = $_POST['verification'];
     $sql = "INSERT INTO `user`(`Name`, `Age`, `verification`) VALUES ('$name','$age','$verification')";
-    $result = mysqli_query($con , $sql);
-    
+    $result = mysqli_query($con, $sql);
+
     if ($result) {
         echo 'Success   ';
     }
 }
 
-function ShowContent(){
+function ShowContent()
+{
     include("database.php");
     $sql = "SELECT `Name`, `Age`, `id` FROM `user`"; // Adjust the table and column names as needed
     $result = $con->query($sql);
     $data = array();
-    
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
     }
-}
-    
-// Return the data as JSON
 
-echo json_encode($data);
+    // Return the data as JSON
 
+    echo json_encode($data);
 }
-function deletedata(){
+function deletedata()
+{
     include("database.php");
     $sql = "DELETE FROM `user`";
-    
-    $result = mysqli_query($con , $sql);
-    
+
+    $result = mysqli_query($con, $sql);
+
     if ($result) {
         echo 'Success   ';
-     } //else{
+    } //else{
     //     echo'error';
     // }
 
-    
+
 }
-function delete_data(){
+function delete_data()
+{
     include("database.php");
     $id = $_POST['id'];
-    
+
     $sql = "DELETE FROM `user` where id=$id";
-    
-    $result = mysqli_query($con , $sql);
-    
+
+    $result = mysqli_query($con, $sql);
+
     if ($result) {
         echo 'Success   ';
-     } //else{
+    } //else{
     //     echo'error';
     // }
-    
+
 }
 
-function update_data(){
+function update_data()
+{
     include("database.php");
     $name = $_POST['name'];
     $age = $_POST['age'];
     $id = $_POST['id'];
     $verification = $_POST['verification'];
-    
+
     $sql = "UPDATE `user` SET `Name`='$name',`Age`='$age',`verification`='$verification' where id=$id";
-    
-    $result = mysqli_query($con , $sql);
-    
+
+    $result = mysqli_query($con, $sql);
+
     if ($result) {
         echo 'Success   ';
-     } //else{
+    } //else{
     //     echo'error';
     // }
-    
+
 }
+
+function filterRecords()
+{
+    include("database.php");
+    $minAge = intval($_POST['minAge']);
+    $maxAge = intval($_POST['maxAge']);
+
+    // Modify your SQL query to filter records based on age
+    $query = "SELECT * FROM user WHERE Age >= $minAge AND Age <= $maxAge";
+
+    // Execute the query and fetch results
+    $result = mysqli_query($con, $query);
+
+    $data = array();
+    while ($row = mysqli_fetch_assoc($result)) {
+        $data[] = $row;
+    }
+
+    // Return the filtered records as JSON data
+    echo json_encode($data);
+}
+     
+    
+
+
+
 
 // function qualification_data(){
 //     include("database.php"); // Include your database connection
@@ -110,4 +142,3 @@ function update_data(){
 //     // Return the data as JSON
 //     echo json_encode($data);
 // }
-?>

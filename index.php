@@ -38,6 +38,31 @@
             <button id="btn0" class="btn btn-outline-secondary" style="width: fit-content; margin-right: 20px; margin-top: 20px">Add Data</button>
         </div>
     </form>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Filter Records</h2>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="minAge">Min Age:</label>
+                    <input type="number" class="form-control" name="minAge" id="minAge" placeholder="Min Age">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="maxAge">Max Age:</label>
+                    <input type="number" class="form-control" name="maxAge" id="maxAge" placeholder="Max Age">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button id="filterButton" class="btn btn-primary">Apply Filter</button>
+            </div>
+            <div class="col-md-3">
+                <button id="clearFilterButton" class="btn btn-secondary">Clear Filter</button>
+            </div>
+        </div>
+    </div>
+
     <div id="div1" class="container mt-5">
         <h2 class="mb-4">Employee List</h2>
         <table class="table table-bordered">
@@ -93,6 +118,25 @@
             $("#age").val("");
         });
 
+        $("#filterButton").click(function() {
+            // Get the min and max age values from the input fields
+            var minAge = parseInt($("#minAge").val());
+            var maxAge = parseInt($("#maxAge").val());
+
+            // Call the function to filter records
+            filterRecords(minAge, maxAge);
+        });
+
+        // Event handler for the clear filter button
+        $("#clearFilterButton").click(function() {
+            // Clear the min and max age input fields
+            $("#minAge").val("");
+            $("#maxAge").val("");
+
+            // Show all records by calling ShowContent without filters
+            ShowContent();
+        });
+
         function updateRowBackgroundColor() {
             var rows = $("#table-body tr");
             rows.each(function() {
@@ -120,74 +164,7 @@
                     var tableBody = $("#table-body");
                     tableBody.empty();
 
-                    for (let i = 0; i < a.length; i++) {
-                        var name = a[i]['Name'];
-                        var age = a[i]['Age'];
-                        var id = a[i]['id'];
-                        var tr = $("<tr>");
-                        var td1 = $("<td>").text(name);
-                        var td2 = $("<td>").text(age);
-                        var btn = document.createElement("button");
-                        btn.innerHTML = ("Delete");
-                        btn.className = ("btn btn-outline-secondary");
-                        btn.style = "width:100; height:40; margin-left:10px";
-                        btn.id = (id);
-                        btn.addEventListener("click", function() {
-                            delete_data(id)
-                        });
-                        var edit_btn = $("<button>").text("Edit").addClass("btn btn-outline-secondary").css("width", "100px").attr("id", id);
-
-
-                        edit_btn.on("click", function() {
-                            // Your edit logic here
-                            if (this.textContent === 'Edit') {
-
-                                // Change the button text to "Save"
-                                this.textContent = 'Save';
-                                // Disable other edit buttons while editing
-                                $('.edit_btn').prop('disabled', true);
-
-                                // Get the current row's data
-                                var currentRow = $(this).closest('tr');
-                                var name = currentRow.find('td:eq(0)').text();
-                                var age = currentRow.find('td:eq(1)').text();
-
-                                // Populate the form fields with the row data
-                                $('#name').val(name);
-                                $('#age').val(age);
-                                $('#verification').val(verification);
-                            } else {
-                                // Handle "Save" logic here
-                                var updatedName = $('#name').val();
-                                var updatedAge = $('#age').val();
-                                var updatedverification = $('#verification').val();
-                                var updatedverification = updatedAge >= 18 ? 'verified' : 'unverified';
-                                update_content(this.id, updatedName, updatedAge, updatedverification);
-
-                                // Restore the button text to "Edit"
-                                this.textContent = 'Edit';
-                                // Enable other edit buttons
-                                $('.edit_btn').prop('disabled', false);
-                            }
-
-
-                        });
-
-                        tr.append(td1);
-                        tr.append(td2);
-                        tr.append(btn);
-                        tr.append(edit_btn);
-                        tableBody.append(tr);
-
-                        updateRowBackgroundColor();
-
-                        // // Apply background color based on age
-                        // if (parseInt(age) >= 18) {
-                        //     tr.addClass('green-background');
-                        // } else {
-                        //     tr.addClass('red-background');
-                        // }
-                    }
+                    DisplayData(a,tableBody);
                 },
                 error: function(error) {
                     console.error('Error:', error);
@@ -265,7 +242,95 @@
 
         }
 
-    
+        function filterRecords(minAge, maxAge) {
+            $.ajax({
+                url: 'function.php', // URL of your PHP script
+                type: 'POST',
+                data: {
+                    function: "filterRecords",
+                    minAge: minAge,
+                    maxAge: maxAge
+                },
+                success: function(data) {
+                    // Update the table with filtered records
+                    var a = JSON.parse(data);
+                    var tableBody = $("#table-body");
+                    tableBody.empty();
+                    DisplayData(a,tableBody);
+                    
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                },
+            });
+        }
+
+        function DisplayData(a,tableBody){
+            for (let i = 0; i < a.length; i++) {
+                        var name = a[i]['Name'];
+                        var age = a[i]['Age'];
+                        var id = a[i]['id'];
+                        var tr = $("<tr>");
+                        var td1 = $("<td>").text(name);
+                        var td2 = $("<td>").text(age);
+                        var btn = document.createElement("button");
+                        btn.innerHTML = ("Delete");
+                        btn.className = ("btn btn-outline-secondary");
+                        btn.style = "width:100; height:40; margin-left:10px";
+                        btn.id = (id);
+                        btn.addEventListener("click", function() {
+                            delete_data(id)
+                        });
+                        var edit_btn = $("<button>").text("Edit").addClass("btn btn-outline-secondary").css("width", "100px").attr("id", id);
+
+
+                        edit_btn.on("click", function() {
+                            // Your edit logic here
+                            if (this.textContent === 'Edit') {
+
+                                // Change the button text to "Save"
+                                this.textContent = 'Save';
+                                // Disable other edit buttons while editing
+                                $('.edit_btn').prop('disabled', true);
+
+                                // Get the current row's data
+                                var currentRow = $(this).closest('tr');
+                                var name = currentRow.find('td:eq(0)').text();
+                                var age = currentRow.find('td:eq(1)').text();
+
+                                // Populate the form fields with the row data
+                                $('#name').val(name);
+                                $('#age').val(age);
+                                $('#verification').val(verification);
+                            } else {
+                                // Handle "Save" logic here
+                                var updatedName = $('#name').val();
+                                var updatedAge = $('#age').val();
+                                var updatedverification = $('#verification').val();
+                                var updatedverification = updatedAge >= 18 ? 'verified' : 'unverified';
+                                update_content(this.id, updatedName, updatedAge, updatedverification);
+
+                                // Restore the button text to "Edit"
+                                this.textContent = 'Edit';
+                                // Enable other edit buttons
+                                $('.edit_btn').prop('disabled', false);
+                            }
+
+
+                        });
+
+                        tr.append(td1);
+                        tr.append(td2);
+                        tr.append(btn);
+                        tr.append(edit_btn);
+                        tableBody.append(tr);  
+                    }
+
+                    updateRowBackgroundColor();
+        }
+
+
+
         // function qualification_data() {
         //     $.ajax({
         //         url: 'function.php', // URL of your PHP script
