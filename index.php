@@ -253,7 +253,9 @@
                 },
                 success: function(data) {
                     // Update the table with filtered records
+                    console.log(data);
                     var a = JSON.parse(data);
+                    console.log(a);
                     var tableBody = $("#table-body");
                     tableBody.empty();
                     DisplayData(a,tableBody);

@@ -38,9 +38,11 @@ function ShowContent()
     $result = $con->query($sql);
     $data = array();
 
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
+    if ($result) {
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
         }
     }
 
@@ -107,14 +109,23 @@ function filterRecords()
     $maxAge = intval($_POST['maxAge']);
 
     // Modify your SQL query to filter records based on age
-    $query = "SELECT * FROM user WHERE Age >= $minAge AND Age <= $maxAge";
-
+    
+    $query = "SELECT * FROM user WHERE 1=0";
+    if  (!empty($minAge)) {
+        $query .= "AND age >= $minAge" ;
+    }
+    if  (!empty($maxAge)) {
+        $query .= "AND age <= $maxAge" ;
+    }
     // Execute the query and fetch results
-    $result = mysqli_query($con, $query);
-
+    $result = $con->query($query);
     $data = array();
-    while ($row = mysqli_fetch_assoc($result)) {
-        $data[] = $row;
+    if ($result) {
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+        }
     }
 
     // Return the filtered records as JSON data
