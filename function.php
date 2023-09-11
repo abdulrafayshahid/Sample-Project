@@ -104,32 +104,40 @@ function update_data()
 
 function filterRecords()
 {
+    // Include your database connection
     include("database.php");
-    $minAge = intval($_POST['minAge']);
-    $maxAge = intval($_POST['maxAge']);
 
-    // Modify your SQL query to filter records based on age
-    
-    $query = "SELECT * FROM user WHERE 1=0";
-    if  (!empty($minAge)) {
-        $query .= "AND age >= $minAge" ;
+    // Retrieve and sanitize input values
+    $minAge = isset($_POST['minAge']) ? intval($_POST['minAge']) : null;
+    $maxAge = isset($_POST['maxAge']) ? intval($_POST['maxAge']) : null;
+
+    // Prepare the SQL query
+    $query = "SELECT * FROM user WHERE 1=1";
+
+    if (!empty($minAge)) {
+        $query .= " AND Age >= $minAge";
     }
-    if  (!empty($maxAge)) {
-        $query .= "AND age <= $maxAge" ;
+
+    if (!empty($maxAge)) {
+        $query .= " AND Age <= $maxAge";
     }
+
     // Execute the query and fetch results
     $result = $con->query($query);
     $data = array();
+
     if ($result) {
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
         }
+        // Return the filtered records as JSON data
+        echo json_encode($data);
+    } else {
+        // Handle the case where the query failed
+        echo 'Error executing query: ' . $con->error;
     }
-
-    // Return the filtered records as JSON data
-    echo json_encode($data);
 }
      
     
