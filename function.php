@@ -1,22 +1,49 @@
 <?php
-if ($_POST['function'] == "save_content") {
-    SaveContent();
-} elseif ($_POST['function'] == "ShowContent") {
-    ShowContent();
-} elseif ($_POST['function'] == "delete_data") {
-    delete_data();
-} elseif ($_POST['function'] == "deletedata") {
-    deletedata();
-} elseif ($_POST['function'] == "update_data") {
-    update_data();
-} elseif ($_POST['function'] == "filterRecords") {
-    filterRecords();
-} elseif ($_POST['function'] == "pic") {
-    pic();
-}
-// } elseif ($_POST['function'] == "qualification_data") {
-//     qualification_data();
+// if ($_POST['function'] == "save_content") {
+//     SaveContent();
+// } elseif ($_POST['function'] == "ShowContent") {
+//     ShowContent();
+// } elseif ($_POST['function'] == "delete_data") {
+//     delete_data();
+// } elseif ($_POST['function'] == "deletedata") {
+//     deletedata();
+// } elseif ($_POST['function'] == "update_data") {
+//     update_data();
+// } elseif ($_POST['function'] == "filterRecords") {
+//     filterRecords();
+// } elseif ($_POST['function'] == "pic") {
+//     pic();
 // }
+// // } elseif ($_POST['function'] == "qualification_data") {
+// //     qualification_data();
+// // }
+
+if (isset($_POST['function'])) {
+    if ($_POST['function'] == "save_content") {
+        SaveContent();
+    } elseif ($_POST['function'] == "ShowContent") {
+        ShowContent();
+    } elseif ($_POST['function'] == "delete_data") {
+        delete_data();
+    } elseif ($_POST['function'] == "deletedata") {
+        deletedata();
+    } elseif ($_POST['function'] == "update_data") {
+        update_data();
+    } elseif ($_POST['function'] == "filterRecords") {
+        filterRecords();
+    } elseif ($_POST['function'] == "pic") {
+        pic();
+    } elseif ($_POST['function'] == "getpic") {
+        GetPic();
+    }
+    // } elseif ($_POST['function'] == "qualification_data") {
+    //     qualification_data();
+    // }
+} else {
+    // Handle the case where 'function' key is not set in $_POST
+    echo "Function key is not set in the POST data.";
+}
+
 
 function SaveContent()
 {
@@ -146,20 +173,8 @@ function pic()
 {
     include("database.php");
 
-    $sql = "SELECT name, path FROM images";
-    $result = mysqli_query($con, $sql);
-
-    $images = [];
-    while ($row = mysqli_fetch_assoc($result)) {
-        $images[] = $row;
-    }
-
-
-    header("Content-Type: application/json");
-    echo json_encode($images);
-
+    // Check if the request is a POST request for uploading an image
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
         if ($_FILES["image"]["error"] === 0) {
             $imageName = $_FILES["image"]["name"];
             $imageTmpName = $_FILES["image"]["tmp_name"];
@@ -186,8 +201,25 @@ function pic()
         } else {
             echo "Error uploading the image.";
         }
+    } else {
+        // This part handles displaying the list of images
+      
     }
 }
+
+function GetPic(){
+    include("database.php");
+    $sql = "SELECT name, path FROM images";
+    $result = mysqli_query($con, $sql);
+
+    $images = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $images[] = $row;
+    }
+
+    echo json_encode($images);
+}
+
 
 
 

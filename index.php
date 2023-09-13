@@ -86,7 +86,7 @@
         <div id="message"></div>
 
         <h2>Uploaded Images</h2>
-        <div id="imageContainer"></div>
+        <img style="width: 100px;height:100px" id="imageContainer">
 
         <script src="script.js"></script>
     </div>
@@ -375,60 +375,51 @@
         // }
 
 
+       
         $(document).ready(function() {
             // Fetch data from the server using jQuery AJAX
             ShowContent();
         });
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // Function to update the list of uploaded images
-            function updateImageList() {
-                var imageContainer = document.getElementById("imageContainer");
+        $(document).on("submit", "form", function(event) {
+            event.preventDefault();
 
-                // Clear the existing list
-                imageContainer.innerHTML = "";
+            var formData = new FormData(this);
+            formData.append("function", "pic"); 
 
-                // Fetch image data from the server
-                fetch("function.php", {
-                        method: "POST",
-                        body: JSON.stringify({
-                            function: "pic"
-                        })
-                    })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        data.forEach((image) => {
-                            var imgElement = document.createElement("img");
-                            imgElement.src = image.path;
-                            imgElement.alt = image.name;
-                            imageContainer.appendChild(imgElement);
-                        });
-                    });
-            }
-
-            // Update the image list when the page loads
-            updateImageList();
-
-            // Handle the form submission with AJAX
-            var form = document.querySelector("form");
-            form.addEventListener("submit", function(event) {
-                event.preventDefault();
-
-                var formData = new FormData(form);
-
-                fetch("function.php", {
-                        method: "POST",
-                        body: {formData,
-                        function: "pic"
-                        }
-                    })
-                    .then((response) => response.text())
-                    .then((message) => {
-                        document.getElementById("message").textContent = message;
-                        updateImageList(); // Update the image list after uploading
-                    });
+            $.ajax({
+                url: 'function.php',
+                type: 'POST',
+                data: formData, // Pass formData directly
+                processData: false, // Important! Don't process the data
+                contentType: false, // Important! Set contentType to false
+                success: function(message) {
+                    $("#message").text(message);
+                    updateImageList(); // Update the image list after uploading
+                }
             });
         });
+
+        function updateImageList() {
+            var imageContainer = $("#imageContainer")[0];
+            console.log(imageContainer);
+
+
+            // Fetch image data from the server
+            $.ajax({
+                url: 'function.php',
+                type: 'POST',
+                data: {
+                    function: "getpic"
+                },
+                success: function(data) {
+                    
+                    data=JSON.parse(data);
+                    console.log(data);
+                    imageContainer.src=(data[0].path);;
+                }
+            });
+        }
     </script>
 
 </body>
