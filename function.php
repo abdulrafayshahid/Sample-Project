@@ -1,5 +1,4 @@
 <?php
-
 if ($_POST['function'] == "save_content") {
     SaveContent();
 } elseif ($_POST['function'] == "ShowContent") {
@@ -12,6 +11,8 @@ if ($_POST['function'] == "save_content") {
     update_data();
 } elseif ($_POST['function'] == "filterRecords") {
     filterRecords();
+} elseif ($_POST['function'] == "pic") {
+    pic();
 }
 // } elseif ($_POST['function'] == "qualification_data") {
 //     qualification_data();
@@ -139,25 +140,72 @@ function filterRecords()
         echo 'Error executing query: ' . $con->error;
     }
 }
-     
-    
+
+
+function pic()
+{
+    include("database.php");
+
+    $sql = "SELECT name, path FROM images";
+    $result = mysqli_query($con, $sql);
+
+    $images = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $images[] = $row;
+    }
+
+
+    header("Content-Type: application/json");
+    echo json_encode($images);
+
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+        if ($_FILES["image"]["error"] === 0) {
+            $imageName = $_FILES["image"]["name"];
+            $imageTmpName = $_FILES["image"]["tmp_name"];
+            $imageType = $_FILES["image"]["type"];
+            $imageSize = $_FILES["image"]["size"];
+
+            // Check if the uploaded file is an image
+            $allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+            if (in_array($imageType, $allowedTypes)) {
+                // Move the uploaded file to a folder on the server
+                $uploadPath = "uploads/" . $imageName;
+                move_uploaded_file($imageTmpName, $uploadPath);
+
+                // Insert image information into the database
+                $sql = "INSERT INTO images (name, path) VALUES ('$imageName', '$uploadPath')";
+                if (mysqli_query($con, $sql)) {
+                    echo "Image uploaded successfully!";
+                } else {
+                    echo "Error: " . mysqli_error($con);
+                }
+            } else {
+                echo "Only JPEG, PNG, and GIF images are allowed.";
+            }
+        } else {
+            echo "Error uploading the image.";
+        }
+    }
+}
+
 
 
 
 
 // function qualification_data(){
-//     include("database.php"); // Include your database connection
+// include("database.php"); // Include your database connection
 
-//     $sql = "SELECT `id`, `name` FROM `qualifications`"; // Adjust the table and column names as needed
-//     $result = $con->query($sql);
-//     $data = array();
+// $sql = "SELECT `id`, `name` FROM `qualifications`"; // Adjust the table and column names as needed
+// $result = $con->query($sql);
+// $data = array();
 
-//     if ($result->num_rows > 0) {
-//         while ($row = $result->fetch_assoc()) {
-//             $data[] = $row;
-//         }
-//     }
+// if ($result->num_rows > 0) {
+// while ($row = $result->fetch_assoc()) {
+// $data[] = $row;
+// }
+// }
 
-//     // Return the data as JSON
-//     echo json_encode($data);
+// // Return the data as JSON
+// echo json_encode($data);
 // }

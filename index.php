@@ -78,6 +78,17 @@
             </tbody>
         </table>
         <button id="div2" class="btn btn-outline-secondary" style="width: 100px; margin-left: 5px; margin-top: 20px">Delete Table</button>
+        <h1>Upload an Image</h1>
+        <form enctype="multipart/form-data" action="function.php" method="POST">
+            <input type="file" name="image" accept="image/*" required>
+            <button type="submit">Upload</button>
+        </form>
+        <div id="message"></div>
+
+        <h2>Uploaded Images</h2>
+        <div id="imageContainer"></div>
+
+        <script src="script.js"></script>
     </div>
     <!-- Add Bootstrap JS and jQuery scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
@@ -164,7 +175,7 @@
                     var tableBody = $("#table-body");
                     tableBody.empty();
 
-                    DisplayData(a,tableBody);
+                    DisplayData(a, tableBody);
                 },
                 error: function(error) {
                     console.error('Error:', error);
@@ -258,8 +269,8 @@
                     console.log(a);
                     var tableBody = $("#table-body");
                     tableBody.empty();
-                    DisplayData(a,tableBody);
-                    
+                    DisplayData(a, tableBody);
+
                 },
                 error: function(error) {
                     console.error('Error:', error);
@@ -267,68 +278,68 @@
             });
         }
 
-        function DisplayData(a,tableBody){
+        function DisplayData(a, tableBody) {
             for (let i = 0; i < a.length; i++) {
-                        var name = a[i]['Name'];
-                        var age = a[i]['Age'];
-                        var id = a[i]['id'];
-                        var tr = $("<tr>");
-                        var td1 = $("<td>").text(name);
-                        var td2 = $("<td>").text(age);
-                        var btn = document.createElement("button");
-                        btn.innerHTML = ("Delete");
-                        btn.className = ("btn btn-outline-secondary");
-                        btn.style = "width:100; height:40; margin-left:10px";
-                        btn.id = (id);
-                        btn.addEventListener("click", function() {
-                            delete_data(id)
-                        });
-                        var edit_btn = $("<button>").text("Edit").addClass("btn btn-outline-secondary").css("width", "100px").attr("id", id);
+                var name = a[i]['Name'];
+                var age = a[i]['Age'];
+                var id = a[i]['id'];
+                var tr = $("<tr>");
+                var td1 = $("<td>").text(name);
+                var td2 = $("<td>").text(age);
+                var btn = document.createElement("button");
+                btn.innerHTML = ("Delete");
+                btn.className = ("btn btn-outline-secondary");
+                btn.style = "width:100; height:40; margin-left:10px";
+                btn.id = (id);
+                btn.addEventListener("click", function() {
+                    delete_data(id)
+                });
+                var edit_btn = $("<button>").text("Edit").addClass("btn btn-outline-secondary").css("width", "100px").attr("id", id);
 
 
-                        edit_btn.on("click", function() {
-                            // Your edit logic here
-                            if (this.textContent === 'Edit') {
+                edit_btn.on("click", function() {
+                    // Your edit logic here
+                    if (this.textContent === 'Edit') {
 
-                                // Change the button text to "Save"
-                                this.textContent = 'Save';
-                                // Disable other edit buttons while editing
-                                $('.edit_btn').prop('disabled', true);
+                        // Change the button text to "Save"
+                        this.textContent = 'Save';
+                        // Disable other edit buttons while editing
+                        $('.edit_btn').prop('disabled', true);
 
-                                // Get the current row's data
-                                var currentRow = $(this).closest('tr');
-                                var name = currentRow.find('td:eq(0)').text();
-                                var age = currentRow.find('td:eq(1)').text();
+                        // Get the current row's data
+                        var currentRow = $(this).closest('tr');
+                        var name = currentRow.find('td:eq(0)').text();
+                        var age = currentRow.find('td:eq(1)').text();
 
-                                // Populate the form fields with the row data
-                                $('#name').val(name);
-                                $('#age').val(age);
-                                $('#verification').val(verification);
-                            } else {
-                                // Handle "Save" logic here
-                                var updatedName = $('#name').val();
-                                var updatedAge = $('#age').val();
-                                var updatedverification = $('#verification').val();
-                                var updatedverification = updatedAge >= 18 ? 'verified' : 'unverified';
-                                update_content(this.id, updatedName, updatedAge, updatedverification);
+                        // Populate the form fields with the row data
+                        $('#name').val(name);
+                        $('#age').val(age);
+                        $('#verification').val(verification);
+                    } else {
+                        // Handle "Save" logic here
+                        var updatedName = $('#name').val();
+                        var updatedAge = $('#age').val();
+                        var updatedverification = $('#verification').val();
+                        var updatedverification = updatedAge >= 18 ? 'verified' : 'unverified';
+                        update_content(this.id, updatedName, updatedAge, updatedverification);
 
-                                // Restore the button text to "Edit"
-                                this.textContent = 'Edit';
-                                // Enable other edit buttons
-                                $('.edit_btn').prop('disabled', false);
-                            }
-
-
-                        });
-
-                        tr.append(td1);
-                        tr.append(td2);
-                        tr.append(btn);
-                        tr.append(edit_btn);
-                        tableBody.append(tr);  
+                        // Restore the button text to "Edit"
+                        this.textContent = 'Edit';
+                        // Enable other edit buttons
+                        $('.edit_btn').prop('disabled', false);
                     }
 
-                    updateRowBackgroundColor();
+
+                });
+
+                tr.append(td1);
+                tr.append(td2);
+                tr.append(btn);
+                tr.append(edit_btn);
+                tableBody.append(tr);
+            }
+
+            updateRowBackgroundColor();
         }
 
 
@@ -367,6 +378,56 @@
         $(document).ready(function() {
             // Fetch data from the server using jQuery AJAX
             ShowContent();
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Function to update the list of uploaded images
+            function updateImageList() {
+                var imageContainer = document.getElementById("imageContainer");
+
+                // Clear the existing list
+                imageContainer.innerHTML = "";
+
+                // Fetch image data from the server
+                fetch("function.php", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            function: "pic"
+                        })
+                    })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        data.forEach((image) => {
+                            var imgElement = document.createElement("img");
+                            imgElement.src = image.path;
+                            imgElement.alt = image.name;
+                            imageContainer.appendChild(imgElement);
+                        });
+                    });
+            }
+
+            // Update the image list when the page loads
+            updateImageList();
+
+            // Handle the form submission with AJAX
+            var form = document.querySelector("form");
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(form);
+
+                fetch("function.php", {
+                        method: "POST",
+                        body: {formData,
+                        function: "pic"
+                        }
+                    })
+                    .then((response) => response.text())
+                    .then((message) => {
+                        document.getElementById("message").textContent = message;
+                        updateImageList(); // Update the image list after uploading
+                    });
+            });
         });
     </script>
 
