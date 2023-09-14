@@ -17,7 +17,6 @@
 // // } elseif ($_POST['function'] == "qualification_data") {
 // //     qualification_data();
 // // }
-
 if (isset($_POST['function'])) {
     if ($_POST['function'] == "save_content") {
         SaveContent();
@@ -176,7 +175,7 @@ function pic()
     // Check if the request is a POST request for uploading an image
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($_FILES["image"]["error"] === 0) {
-            $imageName = $_FILES["image"]["name"];
+            $imageName =  rand(). $_FILES["image"]["name"];
             $imageTmpName = $_FILES["image"]["tmp_name"];
             $imageType = $_FILES["image"]["type"];
             $imageSize = $_FILES["image"]["size"];
@@ -185,7 +184,7 @@ function pic()
             $allowedTypes = ["image/jpeg", "image/png", "image/gif"];
             if (in_array($imageType, $allowedTypes)) {
                 // Move the uploaded file to a folder on the server
-                $uploadPath = "uploads/" . $imageName;
+                $uploadPath = "uploads/" .$imageName;
                 move_uploaded_file($imageTmpName, $uploadPath);
 
                 // Insert image information into the database
@@ -209,7 +208,7 @@ function pic()
 
 function GetPic(){
     include("database.php");
-    $sql = "SELECT name, path FROM images";
+    $sql = "SELECT name, path FROM images ORDER BY id DESC LIMIT 1";
     $result = mysqli_query($con, $sql);
 
     $images = [];
@@ -241,3 +240,4 @@ function GetPic(){
 // // Return the data as JSON
 // echo json_encode($data);
 // }
+

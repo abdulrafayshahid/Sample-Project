@@ -83,12 +83,12 @@
             <input type="file" name="image" accept="image/*" required>
             <button type="submit">Upload</button>
         </form>
-        <div id="message"></div>
+         <div id="message"></div> 
 
-        <h2>Uploaded Images</h2>
-        <img style="width: 100px;height:100px" id="imageContainer">
+        <!-- <h2>Uploaded Images</h2>
+        <img style="width: 100px;height:100px" id="imageContainer"> -->
 
-        <script src="script.js"></script>
+        
     </div>
     <!-- Add Bootstrap JS and jQuery scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
@@ -400,26 +400,26 @@
             });
         });
 
-        function updateImageList() {
-            var imageContainer = $("#imageContainer")[0];
-            console.log(imageContainer);
+        // function updateImageList() {
+        //     var imageContainer = $("#imageContainer")[0];
+        //     console.log(imageContainer);
 
 
-            // Fetch image data from the server
-            $.ajax({
-                url: 'function.php',
-                type: 'POST',
-                data: {
-                    function: "getpic"
-                },
-                success: function(data) {
+        //     // Fetch image data from the server
+        //     $.ajax({
+        //         url: 'function.php',
+        //         type: 'POST',
+        //         data: {
+        //             function: "getpic"
+        //         },
+        //         success: function(data) {
                     
-                    data=JSON.parse(data);
-                    console.log(data);
-                    imageContainer.src=(data[0].path);;
-                }
-            });
-        }
+        //             data=JSON.parse(data);
+        //             console.log(data);
+        //             imageContainer.src=(data[0].path);;
+        //         }
+        //     });
+        // }
     </script>
 
 </body>
